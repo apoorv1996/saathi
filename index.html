@@ -125,6 +125,16 @@
   .flow .code .tag { background: var(--code-soft); color: var(--code); }
   .flow .d { display: block; color: var(--muted); font-size: 15px; }
 
+.score { display: flex; flex-wrap: wrap; gap: 12px; margin: 8px 0 20px; }
+  .score div { flex: 1 1 150px; border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 12px 14px; }
+  .score b { display: block; font-size: 22px; font-weight: 600; }
+  .score span { font-size: 13px; color: var(--muted); }
+  .misses { width: 100%; border-collapse: collapse; font-size: 14px; margin-bottom: 14px; }
+  .misses th { text-align: left; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  .misses td { padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.45; }
+  .misses td:first-child { white-space: nowrap; }
+  .table-wrap { overflow-x: auto; }
+
   footer { border-top: 1px solid var(--line); padding: 28px 0 48px; font-size: 13px; color: var(--muted); }
 
   @media (max-width: 720px) {
@@ -148,6 +158,7 @@
     <a href="#try">Try it</a>
     <a href="#build">How I built it</a>
     <a href="#how">How it works</a>
+    <a href="#tests">Testing</a>
     <a href="#next">What's next</a>
   </div>
 </nav>
@@ -280,11 +291,50 @@
   </ul>
 </section>
 
+<section id="tests">
+  <h2>How I tested it</h2>
+  <p>An AI app can sound right and still be wrong, so I test it in layers. So far I have run the first two. Each one checks a different part of the flow above.</p>
+
+  <h3>1. Code tests</h3>
+  <p>50 small checks on the parts done by plain code: every day's numbers add up, safety words go to a human, questions about other drivers are refused, follow-ups use the right dates, and the login works. These don't call the AI, so they run in a second and are free.</p>
+
+  <h3>2. Does the AI understand the question?</h3>
+  <p>A fixed list of 45 driver questions in Hindi, Hinglish and English, each with the right answer written down: what the driver is asking about and for which dates. The test sends each question to the AI and compares.</p>
+  <div class="score">
+    <div><b>50 / 50</b><span>code tests passed</span></div>
+    <div><b>39 / 45</b><span>questions fully correct (86%)</span></div>
+    <div><b>43 / 45</b><span>dates correct</span></div>
+  </div>
+  <p>Dates were the main problem in v2. Now every question with a time in it was correct: kal, parson, pichhle hafte, “12 se 15 tarikh”, and follow-ups like “aur parson?”.</p>
+
+  <h3>What it got wrong</h3>
+  <div class="table-wrap">
+  <table class="misses">
+    <tr><th>Driver asked</th><th>What happened</th><th>Why it matters</th></tr>
+    <tr><td>dusre driver ka incentive kitna hai</td><td>Gave the driver their own incentive instead of refusing</td><td>A privacy rule miss. No data leaked, but this rule must hold every time.</td></tr>
+    <tr><td>aaj mausam kaisa hai</td><td>Showed a “system error” reply</td><td>An off-topic question should get a polite “I can't help with that”, not look like a crash.</td></tr>
+    <tr><td>nearest CNG pump kahan hai</td><td>Treated as a question about another driver</td><td>Wrong and confusing reply.</td></tr>
+    <tr><td>मेरे पैसे कम क्यों आए आज</td><td>Gave today's earnings, not the reasons for the cut</td><td>Answered “how much” when the driver asked “why”.</td></tr>
+    <tr><td>jurmana galat laga hai, kya karun?</td><td>Explained the fine</td><td>The driver wants to know how to dispute it.</td></tr>
+    <tr><td>login nahi ho raha</td><td>Sent to a human agent</td><td>My test expected “I can't help”, but a driver who can't log in probably does need a human. I may change the test, not the app.</td></tr>
+  </table>
+  </div>
+  <p>What I learned: the AI is now reliable on the core job (earnings, dates, follow-ups). It is weak on questions outside that job. The next version will fix these, and I will re-run the same 45 questions to compare.</p>
+
+  <h3>Still to test</h3>
+  <ul>
+    <li><b>The spoken reply:</b> is every number right, does it answer what was asked, is it short and simple Hindi.</li>
+    <li><b>Real voices:</b> recordings from drivers, with traffic noise.</li>
+    <li><b>Full conversations:</b> follow-ups, repeats and safety words in the middle of a chat.</li>
+    <li><b>Speed:</b> time taken for each step.</li>
+  </ul>
+</section>
+
 <section id="next">
   <h2>What's next</h2>
   <ul>
     <li>Add Tamil, as planned in the PRD pilot for Coimbatore.</li>
-    <li>Run the test questions after every change and publish the score.</li>
+    <li>Fix the six misses found in testing, then test the spoken replies and real voice recordings.</li>
     <li>Connect the human agent handoff to a real ticketing system.</li>
     <li>Handle “kal” when the driver means tomorrow.</li>
   </ul>
