@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Saathi — voice assistant for auto drivers</title>
+<meta name="description" content="Saathi: a Hindi/Hinglish voice assistant that helps auto drivers understand their earnings. A portfolio project by Apoorv Singhal, built on Sarvam AI APIs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #fbfbfa;
+    --text: #1f2328;
+    --muted: #5f6670;
+    --line: #e6e6e3;
+    --card: #ffffff;
+    --me: #0f766e;        /* teal: me / Sarvam speech API */
+    --me-soft: #e7f4f2;
+    --ai: #6d4bc4;        /* purple: AI / Sarvam LLM */
+    --ai-soft: #f0ecfa;
+    --code: #6b7280;      /* grey: plain code */
+    --code-soft: #f1f1ef;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 20px; }
+  a { color: var(--me); text-underline-offset: 3px; }
+
+  nav {
+    position: sticky; top: 0; z-index: 5;
+    background: rgba(251,251,250,.92); backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--line);
+  }
+  nav .wrap { display: flex; gap: 20px; align-items: center; height: 52px; overflow-x: auto; white-space: nowrap; }
+  nav b { font-weight: 600; margin-right: auto; }
+  nav a { color: var(--muted); text-decoration: none; font-size: 14px; }
+  nav a:hover { color: var(--text); }
+
+  header { padding: 72px 0 40px; }
+  h1 { font-size: 34px; line-height: 1.25; font-weight: 600; margin: 0 0 16px; letter-spacing: -.01em; }
+  .sub { font-size: 18px; color: var(--muted); margin: 0 0 24px; }
+  .byline { font-size: 14px; color: var(--muted); margin-top: 20px; }
+
+  .btn {
+    display: inline-block; padding: 9px 16px; border-radius: 8px;
+    font-size: 15px; font-weight: 500; text-decoration: none;
+    border: 1px solid var(--line); color: var(--text); background: var(--card);
+    margin: 0 8px 8px 0;
+  }
+  .btn.primary { background: var(--me); border-color: var(--me); color: #fff; }
+
+  section { padding: 48px 0; border-top: 1px solid var(--line); }
+  h2 { font-size: 24px; font-weight: 600; margin: 0 0 16px; }
+  h3 { font-size: 17px; font-weight: 600; margin: 36px 0 10px; }
+  p { margin: 0 0 14px; }
+  ul, ol { padding-left: 22px; margin: 0 0 14px; }
+  li { margin-bottom: 6px; }
+  .muted { color: var(--muted); }
+  .note { font-size: 14px; color: var(--muted); background: var(--code-soft); border-radius: 8px; padding: 10px 14px; }
+
+  /* demo */
+  .demo { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: start; }
+  .creds { border: 1px solid var(--line); background: var(--card); border-radius: 10px; padding: 14px 16px; margin-bottom: 14px; font-size: 15px; }
+  .creds code, .try code { font: 14px ui-monospace, Consolas, monospace; background: var(--code-soft); padding: 1px 6px; border-radius: 4px; }
+  .frame {
+    border: 1px solid var(--line); border-radius: 14px; overflow: hidden; background: var(--card);
+    height: 760px;
+  }
+  .frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+  /* legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; color: var(--muted); margin: 6px 0 16px; }
+  .legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+  .lg-me::before { background: var(--me); }
+  .lg-ai::before { background: var(--ai); }
+  .lg-code::before { background: var(--code); }
+
+  /* building process: three columns */
+  .proc { font-size: 14px; }
+  .proc-head, .proc-row { display: grid; grid-template-columns: 1fr 150px 1fr; gap: 10px; }
+  .proc-head { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
+  .proc-head div:first-child { color: var(--me); text-align: right; }
+  .proc-head div:nth-child(2) { color: var(--code); text-align: center; }
+  .proc-head div:last-child { color: var(--ai); }
+  .proc-row { margin-bottom: 8px; align-items: stretch; }
+  .proc-row > div { border-radius: 8px; padding: 8px 12px; line-height: 1.45; }
+  .proc-row .me { background: var(--me-soft); text-align: right; }
+  .proc-row .step { background: var(--code-soft); text-align: center; font-weight: 500; display: flex; align-items: center; justify-content: center; }
+  .proc-row .ai { background: var(--ai-soft); }
+  .proc-row .empty { background: transparent; color: var(--muted); }
+  .loop { border: 1.5px dashed #c9c9c4; border-radius: 12px; padding: 10px 8px 2px; margin: 4px -8px 12px; position: relative; }
+  .loop-label { position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: var(--bg); padding: 0 8px; font-size: 12px; color: var(--muted); white-space: nowrap; }
+
+  /* versions */
+  .versions { list-style: none; padding: 0; }
+  .versions li { display: grid; grid-template-columns: 44px 1fr; gap: 12px; padding: 14px 0; border-bottom: 1px solid var(--line); margin: 0; }
+  .versions li:last-child { border-bottom: 0; }
+  .vtag { font-weight: 600; color: var(--me); }
+  .versions b { font-weight: 600; }
+
+  /* question flow */
+  .flow { list-style: none; padding: 0; margin: 0; counter-reset: f; }
+  .flow li { position: relative; padding: 0 0 18px 34px; margin: 0; counter-increment: f; }
+  .flow li::before {
+    content: counter(f); position: absolute; left: 0; top: 2px;
+    width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center; color: #fff; background: var(--code);
+  }
+  .flow li::after { content: ""; position: absolute; left: 10.5px; top: 26px; bottom: 2px; width: 1px; background: var(--line); }
+  .flow li:last-child::after { display: none; }
+  .flow li.api::before { background: var(--me); }
+  .flow li.llm::before { background: var(--ai); }
+  .flow li.start::before { background: var(--text); }
+  .flow .t { font-weight: 600; }
+  .flow .tag { font-size: 11px; font-weight: 600; padding: 1px 7px; border-radius: 10px; margin-left: 6px; vertical-align: 1px; }
+  .flow .api .tag { background: var(--me-soft); color: var(--me); }
+  .flow .llm .tag { background: var(--ai-soft); color: var(--ai); }
+  .flow .code .tag { background: var(--code-soft); color: var(--code); }
+  .flow .d { display: block; color: var(--muted); font-size: 15px; }
+
+  footer { border-top: 1px solid var(--line); padding: 28px 0 48px; font-size: 13px; color: var(--muted); }
+
+  @media (max-width: 720px) {
+    header { padding: 48px 0 28px; }
+    h1 { font-size: 27px; }
+    .demo { grid-template-columns: 1fr; }
+    .frame { height: 720px; }
+    .proc-head { display: none; }
+    .proc-row { grid-template-columns: 1fr; gap: 4px; margin-bottom: 14px; }
+    .proc-row .me, .proc-row .step { text-align: left; justify-content: flex-start; }
+    .proc-row .me::before { content: "Me: "; font-weight: 600; color: var(--me); }
+    .proc-row .ai::before { content: "AI: "; font-weight: 600; color: var(--ai); }
+    .proc-row .empty { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <b>Saathi</b>
+    <a href="#try">Try it</a>
+    <a href="#build">How I built it</a>
+    <a href="#how">How it works</a>
+    <a href="#next">What's next</a>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<header>
+  <h1>Saathi — a voice assistant for auto drivers to understand their earnings</h1>
+  <p class="sub">Drivers can ask questions like “kal kitna kamaya?” or “paise kyun kate?” in Hindi or Hinglish. Saathi checks the driver's own trip data and replies by voice in Hindi.</p>
+  <a class="btn primary" href="#try">Try the live app</a>
+  <a class="btn" href="prd.pdf" target="_blank" rel="noopener">Read the PRD</a>
+  <div class="byline">Built by Apoorv Singhal · October 2026</div>
+</header>
+
+<section id="why">
+  <h2>Why I built this</h2>
+  <p>While working at Uber on the Auto category, I worked with a lot of drivers, both cab drivers and auto drivers. Many of them were unable to interact with the application through its interface. Their earnings, incentives and fines were all in the app, but they could not easily understand them. That is where the motivation for this project came from.</p>
+  <p>I have recently started learning how LLMs work and how AI products are built. I built this prototype for two reasons:</p>
+  <ol>
+    <li>To understand how these applications are actually built.</li>
+    <li>To build something useful that I can relate to my past experience.</li>
+  </ol>
+</section>
+
+<section id="try">
+  <h2>Try the live app</h2>
+  <div class="demo">
+    <div>
+      <p>Log in as one of the two demo drivers:</p>
+      <div class="creds">
+        Ramesh: <code>DRV_10482</code> / <code>ramesh123</code><br>
+        Suresh: <code>DRV_20517</code> / <code>suresh123</code>
+      </div>
+      <p>Tap the mic or type your question. You can try:</p>
+      <ul class="try">
+        <li><code>kal kitna kamaya?</code></li>
+        <li><code>platform fee kyun kati?</code></li>
+        <li><code>incentive kaise bana?</code></li>
+        <li>Ask the same question again to see how it handles repeats.</li>
+      </ul>
+      <p class="note">The data is dummy data from 1–21 Oct 2026, and the app treats 21 Oct as today. The app runs on a free server, so the first load can take up to a minute.</p>
+      <a class="btn" href="https://apoorv1996-driver-voice-agent.hf.space" target="_blank" rel="noopener">Open the app in a new tab</a>
+    </div>
+    <div class="frame">
+      <iframe src="https://apoorv1996-driver-voice-agent.hf.space" title="Saathi live demo" allow="microphone; autoplay" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+<section id="build">
+  <h2>How I built it</h2>
+  <p>I built this app using AI, and I don't want to hide that. The coding was done by AI. I reviewed the code, identified what purpose it needs to solve, and took the trade-offs and decisions that came up while building. Then I tested it to confirm that it solves my use case.</p>
+  <p>My idea was to learn how the entire application is built, so I built it step by step, one version at a time.</p>
+
+  <h3>My building process: what I did and what AI did</h3>
+  <div class="proc">
+    <div class="proc-head"><div>What I did</div><div>Step</div><div>What AI did</div></div>
+    <div class="proc-row"><div class="me">Picked driver earnings questions, from my experience at Uber</div><div class="step">1. Find the problem</div><div class="ai">Matched the idea to Sarvam's APIs</div></div>
+    <div class="proc-row"><div class="me">Prompts, tool calling, evaluations</div><div class="step">2. Learn the basics</div><div class="ai">Worked as a tutor</div></div>
+    <div class="proc-row"><div class="me">Structure and requirements, incl. what AI vs code does</div><div class="step">3. Write the PRD</div><div class="ai">Refined it and found edge cases</div></div>
+    <div class="proc-row"><div class="me">Called each Sarvam API by hand in Colab</div><div class="step">4. Try the APIs</div><div class="ai">Explained the errors</div></div>
+    <div class="loop">
+      <div class="loop-label">Repeated for every version, v1 → v5</div>
+      <div class="proc-row"><div class="me">Decided the scope and trade-offs</div><div class="step">5. Plan the version</div><div class="ai">Suggested options</div></div>
+      <div class="proc-row"><div class="me empty">—</div><div class="step">6. Write the code</div><div class="ai">Gemini for v1–v2, Claude for v3–v5</div></div>
+      <div class="proc-row"><div class="me">Listed the fixes and set the order</div><div class="step">7. Review the code</div><div class="ai">Flagged technical issues</div></div>
+      <div class="proc-row"><div class="me">Reported what felt wrong</div><div class="step">8. Test as a driver</div><div class="ai">Found the cause and fixed it</div></div>
+    </div>
+    <div class="proc-row"><div class="me">Chose the hosting and set it up</div><div class="step">9. Launch</div><div class="ai">Fixed deployment issues</div></div>
+  </div>
+
+  <h3>Started with a PRD</h3>
+  <p>I started with a product requirements document (PRD). I structured the PRD myself: the opportunity, the users and their problems, the sections, the requirements, and which parts should be done by AI and which by code. I filled it in and then refined it using AI. I also used AI to identify how the document could be improved and whether I was missing any edge cases. For example, “kal” can mean both yesterday and tomorrow, and what the app should do when the AI's answer cannot be trusted.</p>
+  <a class="btn" href="prd.pdf" target="_blank" rel="noopener">View the full PRD (22 pages)</a>
+
+  <h3>Version by version</h3>
+  <ul class="versions">
+    <li><span class="vtag">v1</span><div><b>Basic chatbot.</b> Answered based on keywords with fixed Hindi replies, no AI. This helped me understand how the speech and voice APIs work. Problem: almost every question got the same earnings answer.</div></li>
+    <li><span class="vtag">v2</span><div><b>AI understands the question.</b> An LLM identifies what the driver is asking and for which dates. While reviewing, I found that the dates were often wrong, it reported the wrong fine, and it skipped days where data was missing without telling the driver.</div></li>
+    <li><span class="vtag">v3</span><div><b>Code does all the calculations.</b> The AI only identifies the question. Code calculates the dates and every number. Safety words like “accident” go directly to a human agent. If data is missing, the app says so. I also added a set of test questions.</div></li>
+    <li><span class="vtag">v4</span><div><b>Follow-up questions.</b> While testing, the app told me about a ₹50 fine. When I asked “why was it deducted?”, it said there was no deduction, because it did not remember the previous answer. I added follow-up questions, a login with two demo drivers, a check that refuses questions about other drivers, and a phone-style interface.</div></li>
+    <li><span class="vtag">v5</span><div><b>Explains the “why”.</b> Testing showed that it repeated the same answer and could not explain how fees or incentives work. I added a knowledge base of policies, let the AI write the reply while code checks every number in it, and made it offer a human agent instead of repeating an answer. Switching to Sarvam's real-time model reduced the reply time from 20–40 seconds to 4–6 seconds.</div></li>
+  </ul>
+
+  <h3>Decisions I took</h3>
+  <ul>
+    <li><b>Follow-up questions should work.</b> A driver will ask “kyun?” after an answer, so the app needs to remember the conversation.</li>
+    <li><b>A driver can see only their own data.</b> The driver is identified from the login, not from what they say. Questions about other drivers are refused.</li>
+    <li><b>Never give the same answer twice.</b> If the driver asks again, the first answer did not help. So the app offers to transfer the call to customer service, even though this means more calls to support.</li>
+    <li><b>“Why” questions need policy, not just numbers.</b> A knowledge base lets the app explain how the incentive or fee was calculated, using the driver's own trips.</li>
+    <li><b>Show the data behind the answers.</b> The demo shows each driver's full data and the policies below the app, so anyone can verify the answers.</li>
+  </ul>
+</section>
+
+<section id="how">
+  <h2>How it works</h2>
+  <h3 style="margin-top:0">Flow of one question</h3>
+  <p>AI is used only to understand the question and write the reply. Everything that needs to be exactly right is done by code.</p>
+  <div class="legend"><span class="lg-me">Sarvam speech API</span><span class="lg-ai">Sarvam LLM</span><span class="lg-code">Plain code</span></div>
+  <ol class="flow">
+    <li class="start"><span class="t">Driver speaks or types</span><span class="d">Logged in, so the app already knows the driver ID.</span></li>
+    <li class="code"><span class="t">Clean the audio</span><span class="tag">Code</span><span class="d">ffmpeg converts it to 16 kHz mono, 0.5 to 30 seconds.</span></li>
+    <li class="api"><span class="t">Speech to text · Saaras v3</span><span class="tag">Sarvam API</span><span class="d">Codemix mode keeps Hinglish exactly as spoken.</span></li>
+    <li class="code"><span class="t">Safety keyword check</span><span class="tag">Code</span><span class="d">Words like accident, police, block, fraud (in English and Hindi script) go to a human agent.</span></li>
+    <li class="code"><span class="t">Other-driver check</span><span class="tag">Code</span><span class="d">Another driver's name or ID gets a polite refusal.</span></li>
+    <li class="llm"><span class="t">Understand the question · LLM call 1</span><span class="tag">Sarvam LLM</span><span class="d">sarvam-105b-conversations returns the topic, “how much” or “why”, and the time period.</span></li>
+    <li class="code"><span class="t">Dates and calculations</span><span class="tag">Code</span><span class="d">“kal” becomes 20 Oct; code adds up trips, fee, incentive and fines from the driver's data.</span></li>
+    <li class="code"><span class="t">Repeat check</span><span class="tag">Code</span><span class="d">The same question again gets an offer to transfer to customer service.</span></li>
+    <li class="llm"><span class="t">Write the reply · LLM call 2</span><span class="tag">Sarvam LLM</span><span class="d">A short Hindi reply from the facts sheet and the knowledge base.</span></li>
+    <li class="code"><span class="t">Number check</span><span class="tag">Code</span><span class="d">If the reply has any number not in the data or rules, a fixed template reply is used.</span></li>
+    <li class="api"><span class="t">Text to speech · Bulbul v3</span><span class="tag">Sarvam API</span><span class="d">Hindi voice reply, played in the app.</span></li>
+  </ol>
+
+  <h3>What is used</h3>
+  <ul>
+    <li><b>Sarvam APIs:</b> Saaras v3 (speech to text, codemix mode), sarvam-105b-conversations (LLM, reasoning off, temperature 0), Bulbul v3 (Hindi voice, speaker “Shubh”).</li>
+    <li><b>Data:</b> dummy driver data (two drivers, 1–21 Oct 2026) and a knowledge base of policies (platform fee, incentive slabs, fines, payouts).</li>
+    <li><b>App:</b> Python with Gradio, a phone-style web interface, hosted on Hugging Face Spaces.</li>
+    <li>There is no separate translation step. Saaras writes down the Hinglish as spoken, the LLM reads it directly and writes the reply in Hindi, and Bulbul speaks it.</li>
+  </ul>
+
+  <h3>Rules the app always follows</h3>
+  <ul>
+    <li>AI never does calculations. Code calculates every number.</li>
+    <li>Every number the driver hears is checked against their data and the policy.</li>
+    <li>A driver can never see another driver's data.</li>
+    <li>Safety words skip the AI, so they work even if the AI is down.</li>
+    <li>If data is missing, the app says so instead of guessing.</li>
+    <li>The same answer is never given twice.</li>
+  </ul>
+</section>
+
+<section id="next">
+  <h2>What's next</h2>
+  <ul>
+    <li>Add Tamil, as planned in the PRD pilot for Coimbatore.</li>
+    <li>Run the test questions after every change and publish the score.</li>
+    <li>Connect the human agent handoff to a real ticketing system.</li>
+    <li>Handle “kal” when the driver means tomorrow.</li>
+  </ul>
+
+  <h3>About me</h3>
+  <p>Apoorv Singhal. IIT Bombay, IIM Ahmedabad. Previously at Uber (Auto category, business operations) and Chief of Staff at BlueStone. Currently learning how to build AI products by building them.</p>
+  <a class="btn" href="https://apoorv1996-driver-voice-agent.hf.space" target="_blank" rel="noopener">Live app</a>
+  <a class="btn" href="prd.pdf" target="_blank" rel="noopener">PRD</a>
+  <a class="btn" href="https://huggingface.co/spaces/apoorv1996/driver-voice-agent/tree/main" target="_blank" rel="noopener">Code</a>
+  <a class="btn" href="https://www.linkedin.com/in/apoorv01" target="_blank" rel="noopener">LinkedIn</a>
+  <a class="btn" href="mailto:apoorv.singhal96@gmail.com">Email</a>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">All driver data and policies in this demo are dummy data. This is a personal project and is not connected to Uber or Sarvam AI.</div>
+</footer>
+
+</body>
+</html>
