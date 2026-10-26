@@ -84,15 +84,15 @@
 
   /* building process: three columns */
   .proc { font-size: 14px; }
-  .proc-head, .proc-row { display: grid; grid-template-columns: 1fr 150px 1fr; gap: 10px; }
+  .proc-head, .proc-row { display: grid; grid-template-columns: 160px 1fr 1fr; gap: 10px; }
   .proc-head { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; margin-bottom: 8px; }
-  .proc-head div:first-child { color: var(--me); text-align: right; }
-  .proc-head div:nth-child(2) { color: var(--code); text-align: center; }
+  .proc-head div:first-child { color: var(--code); }
+  .proc-head div:nth-child(2) { color: var(--me); }
   .proc-head div:last-child { color: var(--ai); }
   .proc-row { margin-bottom: 8px; align-items: stretch; }
   .proc-row > div { border-radius: 8px; padding: 8px 12px; line-height: 1.45; }
-  .proc-row .me { background: var(--me-soft); text-align: right; }
-  .proc-row .step { background: var(--code-soft); text-align: center; font-weight: 500; display: flex; align-items: center; justify-content: center; }
+  .proc-row .me { background: var(--me-soft); }
+  .proc-row .step { background: var(--code-soft); font-weight: 500; display: flex; align-items: center; }
   .proc-row .ai { background: var(--ai-soft); }
   .proc-row .empty { background: transparent; color: var(--muted); }
   .loop { border: 1.5px dashed #c9c9c4; border-radius: 12px; padding: 10px 8px 2px; margin: 4px -8px 12px; position: relative; }
@@ -134,8 +134,7 @@
     .frame { height: 720px; }
     .proc-head { display: none; }
     .proc-row { grid-template-columns: 1fr; gap: 4px; margin-bottom: 14px; }
-    .proc-row .me, .proc-row .step { text-align: left; justify-content: flex-start; }
-    .proc-row .me::before { content: "Me: "; font-weight: 600; color: var(--me); }
+        .proc-row .me::before { content: "Me: "; font-weight: 600; color: var(--me); }
     .proc-row .ai::before { content: "AI: "; font-weight: 600; color: var(--ai); }
     .proc-row .empty { display: none; }
   }
@@ -205,19 +204,19 @@
 
   <h3>My building process: what I did and what AI did</h3>
   <div class="proc">
-    <div class="proc-head"><div>What I did</div><div>Step</div><div>What AI did</div></div>
-    <div class="proc-row"><div class="me">Picked driver earnings questions, from my experience at Uber</div><div class="step">1. Find the problem</div><div class="ai">Matched the idea to Sarvam's APIs</div></div>
-    <div class="proc-row"><div class="me">Prompts, tool calling, evaluations</div><div class="step">2. Learn the basics</div><div class="ai">Worked as a tutor</div></div>
-    <div class="proc-row"><div class="me">Structure and requirements, incl. what AI vs code does</div><div class="step">3. Write the PRD</div><div class="ai">Refined it and found edge cases</div></div>
-    <div class="proc-row"><div class="me">Called each Sarvam API by hand in Colab</div><div class="step">4. Try the APIs</div><div class="ai">Explained the errors</div></div>
+    <div class="proc-head"><div>Step</div><div>What I did</div><div>What AI did</div></div>
+    <div class="proc-row"><div class="step">1. Find the problem</div><div class="me">Picked driver earnings questions, from my experience at Uber</div><div class="ai">Matched the idea to Sarvam's APIs</div></div>
+    <div class="proc-row"><div class="step">2. Learn the basics</div><div class="me">Prompts, tool calling, evaluations</div><div class="ai">Worked as a tutor</div></div>
+    <div class="proc-row"><div class="step">3. Write the PRD</div><div class="me">Structure and requirements, incl. what AI vs code does</div><div class="ai">Refined it and found edge cases</div></div>
+    <div class="proc-row"><div class="step">4. Try the APIs</div><div class="me">Called each Sarvam API by hand in Colab</div><div class="ai">Explained the errors</div></div>
     <div class="loop">
       <div class="loop-label">Repeated for every version, v1 → v5</div>
-      <div class="proc-row"><div class="me">Decided the scope and trade-offs</div><div class="step">5. Plan the version</div><div class="ai">Suggested options</div></div>
-      <div class="proc-row"><div class="me empty">—</div><div class="step">6. Write the code</div><div class="ai">Gemini for v1–v2, Claude for v3–v5</div></div>
-      <div class="proc-row"><div class="me">Listed the fixes and set the order</div><div class="step">7. Review the code</div><div class="ai">Flagged technical issues</div></div>
-      <div class="proc-row"><div class="me">Reported what felt wrong</div><div class="step">8. Test as a driver</div><div class="ai">Found the cause and fixed it</div></div>
+      <div class="proc-row"><div class="step">5. Plan the version</div><div class="me">Decided the scope and trade-offs</div><div class="ai">Suggested options</div></div>
+      <div class="proc-row"><div class="step">6. Write the code</div><div class="me empty">—</div><div class="ai">Wrote the whole code, integrated the different steps, and gave me the application (Gemini for v1–v2, Claude for v3–v5)</div></div>
+      <div class="proc-row"><div class="step">7. Review the code</div><div class="me">Listed the fixes and set the order</div><div class="ai">Flagged technical issues</div></div>
+      <div class="proc-row"><div class="step">8. Test as a driver</div><div class="me">Reported what felt wrong</div><div class="ai">Found the cause and fixed it</div></div>
     </div>
-    <div class="proc-row"><div class="me">Chose the hosting and set it up</div><div class="step">9. Launch</div><div class="ai">Fixed deployment issues</div></div>
+    <div class="proc-row"><div class="step">9. Launch</div><div class="me">Chose the hosting and set it up</div><div class="ai">Fixed deployment issues</div></div>
   </div>
 
   <h3>Started with a PRD</h3>
